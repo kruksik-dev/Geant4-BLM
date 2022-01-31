@@ -9,9 +9,11 @@
 #include "globals.hh"
 #include "G4MultiFunctionalDetector.hh"
 #include "G4SDManager.hh"
+#include "G4VPrimitiveScorer.hh"
 #include "G4PSEnergyDeposit.hh"
 #include "G4NistManager.hh"
-#include "G4SubtractionSolid.hh"
+#include "PlaSD.hh"
+
 
 DetectorConstruction::DetectorConstruction()
 {
@@ -23,8 +25,8 @@ DetectorConstruction::DetectorConstruction()
     steel = 0L;
     air =0L;
     allu=0L;
-    alluboxLogVol=0L;
-    airboxLogVol=0L;
+    allutubeLogVol=0L;
+    airtubeLogVol=0L;
     DetLogVol=0L;
     man = G4NistManager::Instance();
 }
@@ -50,6 +52,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     ConstructInnerTube();
     ConstructMagnet();
     ConstructDetector();
+    ConstructSDandField();
 
     return worldPhys;
 }
@@ -68,12 +71,12 @@ void DetectorConstruction::DeffAllMats()
 
 G4VPhysicalVolume *DetectorConstruction::ConstructWorld()
 {
-    G4double worldX = 5*m;
-    G4double worldY = 5*m;
-    G4double worldZ = 5*m;
+    G4double worldX = 15*m;
+    G4double worldY = 15*m;
+    G4double worldZ = 15*m;
     G4Box* worldSolid = new G4Box("worldSolid",worldX,worldY,worldZ);
                            
-    worldLogic = new G4LogicalVolume(worldSolid, air,"worldLogic", 0,0,0);
+    worldLogic = new G4LogicalVolume(worldSolid, vaccum,"worldLogic", 0,0,0);
     worldLogic->SetVisAttributes(G4VisAttributes::Invisible);
     G4VPhysicalVolume* worldPhys = new G4PVPlacement(0, G4ThreeVector(), worldLogic, "world", 0, false, 0);
     return worldPhys;
@@ -81,14 +84,14 @@ G4VPhysicalVolume *DetectorConstruction::ConstructWorld()
 
 void DetectorConstruction::ConstructOutterTube()
 {
-    G4double radiusMin = 0.92 * cm;
-    G4double radiusMax = 1 * cm;
-    G4double length = 1.3025 * m;
+    G4double radiusMin = 0 * mm;
+    G4double radiusMax = 20 * mm;
+    G4double length = 10.5 * m;
 
-    G4Tubs *OutterTube = new G4Tubs("OutterTube", radiusMin, radiusMax, length / 2., 0 * deg, 360 * deg);
+    G4Tubs *OutterTube = new G4Tubs("OutterTube", radiusMin, radiusMax, length, 0 * deg, 360 * deg);
     OutterTubeLogVol = new G4LogicalVolume(OutterTube, steel, "OutterTubeLogVol");
 
-    G4VisAttributes *OutterTubeVisAtt = new G4VisAttributes(G4Colour::Blue());
+    G4VisAttributes *OutterTubeVisAtt = new G4VisAttributes(G4Colour::Gray());
     OutterTubeVisAtt->SetForceAuxEdgeVisible(true);
     OutterTubeVisAtt->SetForceSolid(false);
     OutterTubeLogVol->SetVisAttributes(OutterTubeVisAtt);
@@ -102,11 +105,11 @@ void DetectorConstruction::ConstructOutterTube()
 
 void DetectorConstruction::ConstructInnerTube()
 {
-    G4double radiusMin = 0.0 * cm;
-    G4double radiusMax = 0.92 * cm;
-    G4double length = 1.3025 * m;
+    G4double radiusMin = 0.0 * mm;
+    G4double radiusMax = 18.5* mm;
+    G4double length = 10.5 * m;
 
-    G4Tubs *InnerTube = new G4Tubs("InnerTube", radiusMin, radiusMax, length / 2., 0 * deg, 360 * deg);
+    G4Tubs *InnerTube = new G4Tubs("InnerTube", radiusMin, radiusMax, length, 0 * deg, 360 * deg);
     InnerTubeLogVol = new G4LogicalVolume(InnerTube, vaccum, "InnerTubeLogVol");
 
     G4VisAttributes *InnerTubeVisAtt = new G4VisAttributes(G4Colour::Red());
@@ -120,63 +123,58 @@ void DetectorConstruction::ConstructInnerTube()
 
 void DetectorConstruction::ConstructMagnet()
 {
-    G4double radiusMin = 1* cm;
-    G4double radiusMax = 10 * cm;
-    G4double length = 10 * cm;
-    G4Tubs *MagnetTube = new G4Tubs("InnerTube", radiusMin, radiusMax, length / 2., 0 * deg, 360 * deg);
+    G4double radiusMin = 20 * mm;
+    G4double radiusMax = 200 * mm;
+    G4double length = 50 * mm;
+    G4Tubs *MagnetTube = new G4Tubs("InnerTube", radiusMin, radiusMax, length, 0 * deg, 360 * deg);
 
     MagnetLogVol = new G4LogicalVolume(MagnetTube , steel, "MagnetLogVol");
 
-    G4VisAttributes *MagnetVisAtt = new G4VisAttributes(G4Colour::Green());
+    G4VisAttributes *MagnetVisAtt = new G4VisAttributes(G4Colour(64, 83, 85, 1));
     MagnetVisAtt->SetForceAuxEdgeVisible(true);
     MagnetVisAtt->SetForceSolid(true);
     MagnetLogVol->SetVisAttributes(MagnetVisAtt);
 
-    G4ThreeVector pos(0, 0, 248.75);
-    new G4PVPlacement(0, pos, MagnetLogVol, "MagnetLogVolPhys", worldLogic, 0, 0,1);
+    G4ThreeVector pos(0, 0, 8650);
+    new G4PVPlacement(0, pos, MagnetLogVol, "MagnetLogVolPhys", worldLogic, 0, 0, 1);
 
 }
 
 void DetectorConstruction::ConstructDetector()
 {
+    G4double radiusMinoutter = 0 * cm;
+    G4double radiusMaxoutter = 3 * cm;
+    G4double radiusMininner = 0 * cm;
+    G4double radiusMaxinner = 2.7 * cm;
+    G4double lengthoutter = 10.3 * cm;
+    G4double lengthinnter = 10 * cm;
 
-    G4double alluboxX = 10.3 * cm;
-    G4double alluboxY = 3 * cm;
-    G4double alluboxZ = 3 * cm;
+    G4Tubs *allutube = new G4Tubs("InnerTube", radiusMinoutter, radiusMaxoutter, lengthoutter, 0 * deg, 360 * deg);
+    allutubeLogVol = new G4LogicalVolume(allutube, allu, "allutubeLogVol");
 
-    G4Box *allubox = new G4Box("allubox", alluboxX, alluboxY, alluboxZ);
-    alluboxLogVol = new G4LogicalVolume(allubox, allu, "alluboxLogVol");
+    G4VisAttributes *allutubeVisAtt = new G4VisAttributes(G4Colour(0.8, 0.3, 0.3, 1.));
+    allutubeVisAtt->SetForceAuxEdgeVisible(true);
+    allutubeVisAtt->SetForceSolid(false);
+    allutubeLogVol->SetVisAttributes(allutubeVisAtt);
 
-    G4VisAttributes *alluboxVisAtt = new G4VisAttributes(G4Colour(0.8, 0.3, 0.3, 1.));
-    alluboxVisAtt->SetForceAuxEdgeVisible(true);
-    alluboxVisAtt->SetForceSolid(false);
-    alluboxLogVol->SetVisAttributes(alluboxVisAtt);
 
-    G4double airgapboxX = 10 * cm;
-    G4double airgapboxY = 2.7 * cm;
-    G4double airgapboxZ = 2.7 * cm;
 
-    G4Box *airbox = new G4Box("airbox", airgapboxX, airgapboxY, airgapboxZ);
-    airboxLogVol = new G4LogicalVolume(airbox, air, "airboxLogVol");
+    G4Tubs *airtube = new G4Tubs("InnerTube", radiusMininner, radiusMaxinner, lengthinnter, 0 * deg, 360 * deg);
+    airtubeLogVol = new G4LogicalVolume(airtube, air, "airtubeLogVol");
 
-    G4VisAttributes *airboxVisAtt = new G4VisAttributes(G4Colour(0.8, 0.3, 0.3, 1.));
-    airboxVisAtt->SetForceAuxEdgeVisible(true);
-    airboxVisAtt->SetForceSolid(false);
-    airboxLogVol->SetVisAttributes(airboxVisAtt);
+    G4VisAttributes *airtubeVisAtt = new G4VisAttributes(G4Colour(0.8, 0.3, 0.3, 1.));
+    airtubeVisAtt->SetForceAuxEdgeVisible(false);
+    airtubeVisAtt->SetForceSolid(false);
+    airtubeLogVol->SetVisAttributes(airtubeVisAtt);
+    new G4PVPlacement(0, G4ThreeVector(0, 0, 0), airtubeLogVol, "airPhys", allutubeLogVol, 0, 0);
 
-    G4ThreeVector pos(0, 50, 428.75);
-    new G4PVPlacement(0, pos, alluboxLogVol, "alluPhys", worldLogic, 0, 0);
-    new G4PVPlacement(0, G4ThreeVector(0,0,0), airboxLogVol, "airPhys", alluboxLogVol, 0, 0);
 
-    G4ThreeVector pos2(0, -50, 428.75);
-    new G4PVPlacement(0, pos2, alluboxLogVol, "alluPhys", worldLogic, 0, 0);
-    new G4PVPlacement(0, G4ThreeVector(0, 0, 0), airboxLogVol, "airPhys", alluboxLogVol, 0, 0);
 
     G4double radiusMin = 0.0 * cm;
-    G4double radiusMax = 0.2 * cm;
-    G4double length = 5 * cm;
+    G4double radiusMax = 0.4 * cm;
+    G4double length = 10 * cm;
 
-    G4Tubs *Det = new G4Tubs("Det", radiusMin, radiusMax, length / 2., 0 * deg, 360 * deg);
+    G4Tubs *Det = new G4Tubs("Det", radiusMin, radiusMax, length, 0 * deg, 360 * deg);
     DetLogVol = new G4LogicalVolume(Det, ppy, "Det");
 
     G4VisAttributes *DetVisAtt = new G4VisAttributes(G4Colour::Blue());
@@ -184,7 +182,31 @@ void DetectorConstruction::ConstructDetector()
     DetVisAtt->SetForceSolid(true);
     DetLogVol->SetVisAttributes(DetVisAtt);
 
+    new G4PVPlacement(0, G4ThreeVector(0, 0, 0), DetLogVol, "PlasticPhys", airtubeLogVol, 0, 0);
+
     G4RotationMatrix *zRot = new G4RotationMatrix;
     zRot->rotateY(90 * deg);
-    new G4PVPlacement(zRot, G4ThreeVector(0, 0, 0), DetLogVol, "airPhys", airboxLogVol, 0, 0);
+
+    G4ThreeVector pos(0, 60, 9200);
+    G4ThreeVector pos2(0, -60, 9200);
+    new G4PVPlacement(zRot, pos, allutubeLogVol, "alluPhys", worldLogic, 0, 0);
+    new G4PVPlacement(zRot, pos2, allutubeLogVol, "alluPhys", worldLogic, 0, 1);
+}
+
+void DetectorConstruction::ConstructSDandField()
+{
+    /*
+    G4MultiFunctionalDetector *detector = new G4MultiFunctionalDetector("PlasticSensitiveDet");
+    G4int depth = 2;
+    G4VPrimitiveScorer *energyDepScorer = new G4PSEnergyDeposit("eDep", depth);
+    detector->RegisterPrimitive(energyDepScorer);
+    DetLogVol->SetSensitiveDetector(detector);
+    G4SDManager *SDmanager = G4SDManager::GetSDMpointer();
+    SDmanager->AddNewDetector(detector);
+    */
+
+    PlasticSD *PSD = new PlasticSD("PSD", "eDep", 2);
+    G4SDManager *SDmanager = G4SDManager::GetSDMpointer();
+    SDmanager->AddNewDetector(PSD);
+    DetLogVol->SetSensitiveDetector(PSD);
 }

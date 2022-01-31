@@ -23,8 +23,8 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4LogicalVolume *OutterTubeLogVol;
     G4LogicalVolume *InnerTubeLogVol;
     G4LogicalVolume *MagnetLogVol;
-    G4LogicalVolume *alluboxLogVol;
-    G4LogicalVolume *airboxLogVol;
+    G4LogicalVolume *allutubeLogVol;
+    G4LogicalVolume *airtubeLogVol;
     G4LogicalVolume * DetLogVol;
     G4VPhysicalVolume *ConstructWorld();
 
@@ -38,6 +38,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     void ConstructInnerTube();
     void ConstructMagnet();
     void ConstructDetector();
+    void ConstructSDandField();
 };
 
 #endif

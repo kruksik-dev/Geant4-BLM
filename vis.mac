@@ -1,13 +1,9 @@
 /vis/open OGL 600x600-0+0
 /vis/drawVolume
 /vis/scene/add/trajectories smooth
-/vis/scene/endOfEventAction accumulate 10
+/vis/scene/endOfEventAction accumulate 20
 /vis/ogl/set/displayListLimit 999999
 /vis/modeling/trajectories/create/drawByCharge
 /vis/modeling/trajectories/drawByCharge-0/default/setDrawStepPts true
 /vis/modeling/trajectories/drawByCharge-0/default/setStepPtsSize 2
-/vis/scene/add/axes 0 0 0 1 cm
-
-
-
-
+/run/beamOn 100
