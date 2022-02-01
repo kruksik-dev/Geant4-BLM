@@ -64,7 +64,7 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
 	*/
 	int eventId = anEvent -> GetEventID();
 	if(eventId%10000 == 0){
-		std::cout << "Currently run " << eventId << " particle for pool" << std::endl;
+		std::cout << "Currently run " << eventId << " particle from pool" << std::endl;
 	}
 	
 

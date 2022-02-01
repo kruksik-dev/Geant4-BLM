@@ -30,12 +30,12 @@ int main(int argc, char** argv)
   G4UImanager* UImanager = G4UImanager::GetUIpointer();
   
   //wizualizacja 
-  G4VisManager* visManager = new G4VisExecutive;
-  visManager->Initialize();  
+  //G4VisManager* visManager = new G4VisExecutive;
+  //visManager->Initialize();  
   
 
   //ui - terminal do wpisywania komend
-  G4UIExecutive* ui = new G4UIExecutive(argc, argv);
+  //G4UIExecutive* ui = new G4UIExecutive(argc, argv);
   
   
   if(argc == 1)
@@ -46,7 +46,7 @@ int main(int argc, char** argv)
      UImanager->ApplyCommand("/control/execute " + filename);
    }
   
-  ui->SessionStart();  
+  //ui->SessionStart();  
   delete runManager;
   return 0;
 }

@@ -7,6 +7,10 @@ include(${Geant4_USE_FILE})
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 
+#ROOT
+find_package(ROOT)
+include_directories(${ROOT_INCLUDE_DIRS})
+
 set(CMAKE_BUILD_TYPE release)
 
 # User code
@@ -15,3 +19,4 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 
 add_executable(BLM BLM.cc ${sources} ${headers})
 target_link_libraries(BLM ${Geant4_LIBRARIES})
+target_link_libraries(BLM ${ROOT_LIBRARIES})
