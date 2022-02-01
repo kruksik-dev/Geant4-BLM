@@ -32,13 +32,12 @@ void PlasticSD::Initialize(G4HCofThisEvent *hce)
 G4bool PlasticSD::ProcessHits(G4Step *step, G4TouchableHistory *)
 {
     G4double edep = GetEnergyDeposit(step);
-    G4double trackLenght = GetTrackLength(step);
     G4int copyNr = GetCopyNr(step);
     G4String volumename = GetVolumeName(step);
     G4String particlename = GetParticleName(step);
 
 
-    if (edep == 0. && trackLenght == 0.)
+    if (edep == 0.)
         return false;
 
     G4int hitsNr = hitsCollection->entries();
@@ -48,7 +47,7 @@ G4bool PlasticSD::ProcessHits(G4Step *step, G4TouchableHistory *)
         G4int moduleCopyNr = (*hitsCollection)[i]->GetCopyNr();
         if (copyNr == moduleCopyNr)
         {
-            (*hitsCollection)[i]->Add(edep, trackLenght, volumename, particlename);
+            (*hitsCollection)[i]->Add(edep, volumename, particlename);
             moduleAlreadyHit = true;
             break;
         }
@@ -57,7 +56,7 @@ G4bool PlasticSD::ProcessHits(G4Step *step, G4TouchableHistory *)
     if (!moduleAlreadyHit)
     {
         PlasticHit *aHit = new PlasticHit(copyNr);
-        aHit->Add(edep, trackLenght, volumename, particlename);
+        aHit->Add(edep, volumename, particlename);
         hitsCollection->insert(aHit);
     }
     return true;
@@ -68,20 +67,11 @@ G4double PlasticSD::GetEnergyDeposit(G4Step *step)
     return step->GetTotalEnergyDeposit();
 }
 
-G4double PlasticSD::GetTrackLength(G4Step *step)
-{
-    G4double stepLength = 0.;
-    //if ( step->GetTrack()->GetDefinition()->GetPDGCharge() != 0. )
-    //{
-    stepLength = step->GetStepLength();
-    //}
-    return stepLength;
-}
 
 G4int PlasticSD::GetCopyNr(G4Step *step)
 {
     G4int voulmeNr =
-        step->GetPostStepPoint()->GetTouchable()->GetCopyNumber(depth);
+        step->GetPreStepPoint()->GetTouchable()->GetCopyNumber(depth);
     return voulmeNr;
 }
 

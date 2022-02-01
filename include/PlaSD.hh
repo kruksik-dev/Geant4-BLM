@@ -26,7 +26,6 @@ private:
     G4int depth;
 
     G4double GetEnergyDeposit(G4Step *step);
-    G4double GetTrackLength(G4Step *step);
     G4int GetCopyNr(G4Step *step);
     G4String GetVolumeName(G4Step *step);
     G4String GetParticleName(G4Step *step);

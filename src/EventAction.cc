@@ -72,13 +72,12 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
 	for(G4int i=0; i!=nrOfDetectors;i++){
 		G4int moduleIndex = (*plasticHC)[i] ->GetCopyNr();
 		G4double energyDep = (*plasticHC)[i] -> GetEdep();
-		G4double trackLength = (*plasticHC)[i] ->GetTrackLength();
 		G4String volumeName = (*plasticHC)[i]->GetVolumeName();
 		G4String particleName = (*plasticHC)[i]->GetParticleName();
-		std::cout << eventId << " " << moduleIndex << " " << energyDep / keV << " " << trackLength << " " << volumeName << " " << particleName << std::endl;
+		std::cout << eventId << " " << moduleIndex << " " << energyDep / keV << " " << volumeName << " " << particleName << std::endl;
 		//output << eventId <<" " <<  moduleIndex << " " << energyDep / keV << " " << trackLength << " " << volumeName << " " << particleName << std::endl;
-		output << eventId << "," << moduleIndex << "," << energyDep / keV << "," << trackLength << "," << volumeName << "," << particleName << std::endl;
-		outputFile->AddPlasticHit(eventId, moduleIndex, energyDep/keV, trackLength);
+		output << eventId << "," << moduleIndex << "," << energyDep / keV << "," << volumeName << "," << particleName << std::endl;
+		outputFile->AddPlasticHit(eventId, moduleIndex, energyDep /keV );
 	}
 }
 

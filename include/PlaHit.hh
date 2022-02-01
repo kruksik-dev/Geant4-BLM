@@ -26,11 +26,10 @@ public:
     inline void operator delete(void *);
 
     // methods to handle data
-    void Add(G4double energyDep, G4double trackLen, G4String volName, G4String partiName);
+    void Add(G4double energyDep, G4String volName, G4String partiName);
 
     // get methods
     G4double GetEdep();
-    G4double GetTrackLength();
     G4int GetCopyNr();
     G4String GetVolumeName();
     G4String GetParticleName();
@@ -38,7 +37,6 @@ public:
 
 private:
     G4double eDep;        ///< Energy deposit in the sensitive volume
-    G4double trackLength; ///< Track length in the  sensitive volume
     G4int copyNr;
     G4String volumeName;
     G4String particleName;

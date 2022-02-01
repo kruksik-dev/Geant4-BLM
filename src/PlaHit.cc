@@ -12,7 +12,6 @@ G4ThreadLocal G4Allocator<PlasticHit> *PlasticHitAllocator = 0;
 PlasticHit::PlasticHit(G4int copyNrVal) : G4VHit()
 {
     eDep = 0.;
-    trackLength = 0.;
     copyNr = copyNrVal;
     volumeName = "";
     particleName = "";
@@ -24,7 +23,6 @@ PlasticHit::~PlasticHit(){}
 PlasticHit::PlasticHit(const PlasticHit &right) : G4VHit()
 {
     eDep = right.eDep;
-    trackLength = right.trackLength;
     copyNr = right.copyNr;
     volumeName = right.volumeName;
     particleName = right.particleName;
@@ -34,7 +32,6 @@ PlasticHit::PlasticHit(const PlasticHit &right) : G4VHit()
 const PlasticHit &PlasticHit::operator=(const PlasticHit &right)
 {
     eDep = right.eDep;
-    trackLength = right.trackLength;
     copyNr = right.copyNr;
     volumeName = right.volumeName;
     particleName = right.particleName;
@@ -47,10 +44,9 @@ G4int PlasticHit::operator==(const PlasticHit &right) const
     return (this == &right) ? 1 : 0;
 }
 
-void PlasticHit::Add(G4double energyDep, G4double trackLen, G4String volName, G4String partiName)
+void PlasticHit::Add(G4double energyDep,G4String volName, G4String partiName)
 {
     eDep += energyDep;
-    trackLength += trackLen;
     volumeName = volName;
     particleName = partiName;
 
@@ -59,11 +55,6 @@ void PlasticHit::Add(G4double energyDep, G4double trackLen, G4String volName, G4
 G4double PlasticHit::GetEdep()
 {
     return eDep;
-}
-
-G4double PlasticHit::GetTrackLength()
-{
-    return trackLength;
 }
 
 G4int PlasticHit::GetCopyNr()

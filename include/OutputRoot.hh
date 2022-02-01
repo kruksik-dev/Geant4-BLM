@@ -17,7 +17,7 @@ public:
     }
     void SaveOutput();
     void CreateFile(G4String filename);
-    void AddPlasticHit(int eventId, int detectorId, double enDep, double stepLength);
+    void AddPlasticHit(int eventId, int detectorId, double enDep);
 
 private:
     OutputRoot();

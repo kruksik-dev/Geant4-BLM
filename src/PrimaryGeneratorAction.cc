@@ -46,13 +46,10 @@ void PrimaryGeneratorAction::GenerateNeutronIncident(G4Event* anEvent)
 {
  
 	G4ParticleDefinition* particle = particleTable->FindParticle("e-");
-  //G4ParticleDefinition *particle = particleTable->FindParticle("e-");
   particleGun->SetParticleDefinition(particle);
-  //particleGun->SetParticlePosition(G4ThreeVector(0.0 * m, 0.0 * m, -10.4 * m));
-  particleGun->SetParticlePosition(G4ThreeVector(0.0 * m, -60.0 * mm, 9.2 * m));
-  particleGun->SetParticleMomentumDirection(G4ThreeVector(0.0, 0., 1));
-  //particleGun->SetParticleMomentumDirection(G4ThreeVector(0.001, 0., 1));
-  particleGun->SetParticleEnergy(1200.0 * keV);
+  particleGun->SetParticlePosition(G4ThreeVector(0.0 * m, 0.0 * m, -10.4 * m));
+  particleGun->SetParticleMomentumDirection(G4ThreeVector(0.001, 0., 1));
+  particleGun->SetParticleEnergy(600.0 * keV);
   particleGun->GeneratePrimaryVertex(anEvent);
 }
 

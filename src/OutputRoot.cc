@@ -21,21 +21,19 @@ void OutputRoot::SaveOutput()
 
 void OutputRoot::CreatePlasticTuple()
 {
-    rootManager->CreateNtuple("Plastic_Info", "Energy deposit and step lenght in NaI detector");
+    rootManager->CreateNtuple("Plastic_Info", "Energy deposit in Plastic");
     rootManager->CreateNtupleIColumn("eventId");
     rootManager->CreateNtupleIColumn("detectorId");
     rootManager->CreateNtupleDColumn("energyDep");
-    rootManager->CreateNtupleDColumn("stepLength");
     rootManager->FinishNtuple();
 }
 
-void OutputRoot::AddPlasticHit(int eventId, int detectorId, double enDep, double stepLength)
+void OutputRoot::AddPlasticHit(int eventId, int detectorId, double enDep)
 {
     int cloId = 0;
     rootManager->FillNtupleIColumn(PlasticDetTupleId, cloId, eventId);
     rootManager->FillNtupleIColumn(PlasticDetTupleId, ++cloId, detectorId);
     rootManager->FillNtupleDColumn(PlasticDetTupleId, ++cloId, enDep);
-    rootManager->FillNtupleDColumn(PlasticDetTupleId, ++cloId, stepLength);
     rootManager->AddNtupleRow(PlasticDetTupleId);
 }
 OutputRoot *OutputRoot::instance = 0;
