@@ -49,7 +49,7 @@ void PrimaryGeneratorAction::GenerateNeutronIncident(G4Event* anEvent)
   particleGun->SetParticleDefinition(particle);
   particleGun->SetParticlePosition(G4ThreeVector(0.0 * m, 0.0 * m, -10.4 * m));
   particleGun->SetParticleMomentumDirection(G4ThreeVector(0.001, 0., 1));
-  particleGun->SetParticleEnergy(600.0 * keV);
+  particleGun->SetParticleEnergy(72.0 * MeV);
   particleGun->GeneratePrimaryVertex(anEvent);
 }
 

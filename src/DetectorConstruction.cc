@@ -66,7 +66,7 @@ void DetectorConstruction::DeffAllMats()
     steel = man->FindOrBuildMaterial("G4_STAINLESS-STEEL");
     air = man->FindOrBuildMaterial("G4_AIR");
     allu = man->FindOrBuildMaterial("G4_Al");
-    ppy = man->FindOrBuildMaterial("G4_POLYPROPYLENE");
+    ppy = man->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
 }
 
 G4VPhysicalVolume *DetectorConstruction::ConstructWorld()
@@ -187,26 +187,27 @@ void DetectorConstruction::ConstructDetector()
     G4RotationMatrix *zRot = new G4RotationMatrix;
     zRot->rotateY(90 * deg);
 
-    G4ThreeVector pos(0, 60, 9200);
-    G4ThreeVector pos2(0, -60, 9200);
+     G4ThreeVector pos(0, 60, 9200);
+     G4ThreeVector pos2(0, -60, 9200);
+
     new G4PVPlacement(zRot, pos, allutubeLogVol, "alluPhys", worldLogic, 0, 0);
     new G4PVPlacement(zRot, pos2, allutubeLogVol, "alluPhys", worldLogic, 0, 1);
 }
 
 void DetectorConstruction::ConstructSDandField()
 {
-    /*
+    
     G4MultiFunctionalDetector *detector = new G4MultiFunctionalDetector("PlasticSensitiveDet");
     G4int depth = 2;
-    G4VPrimitiveScorer *energyDepScorer = new G4PSEnergyDeposit("eDep", depth);
+    G4VPrimitiveScorer *energyDepScorer = new G4PSEnergyDeposit("eDepo", depth);
     detector->RegisterPrimitive(energyDepScorer);
     DetLogVol->SetSensitiveDetector(detector);
     G4SDManager *SDmanager = G4SDManager::GetSDMpointer();
     SDmanager->AddNewDetector(detector);
-    */
+    
 
     PlasticSD *PSD = new PlasticSD("PSD", "eDep", 2);
-    G4SDManager *SDmanager = G4SDManager::GetSDMpointer();
+    //G4SDManager *SDmanager = G4SDManager::GetSDMpointer();
     SDmanager->AddNewDetector(PSD);
     DetLogVol->SetSensitiveDetector(PSD);
 }

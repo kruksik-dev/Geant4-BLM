@@ -35,33 +35,34 @@ void EventAction::BeginOfEventAction(const G4Event* anEvent)
 void EventAction::EndOfEventAction(const G4Event* anEvent)
 {
 	
-	//SteppingAction::nrOfSec = 0;
-
 	G4HCofThisEvent *hitsCollOfThisEvent = anEvent->GetHCofThisEvent();
-	if (!hitsCollOfThisEvent){
-		return;
+    	if(!hitsCollOfThisEvent)
+       	 return;
+
+	G4SDManager* SDmanager = G4SDManager::GetSDMpointer();
+	G4int collID = SDmanager->GetCollectionID("PlasticSensitiveDet/eDepo");
+
+	G4THitsMap<G4double> *myPassMap = dynamic_cast<G4THitsMap<G4double> *>(hitsCollOfThisEvent->GetHC(collID));
+	G4int eventID = anEvent->GetEventID();
+
+	int limit = 2;
+	for (int i; i != limit; ++i)
+	{
+		if ((*myPassMap)[i] != 0L)
+		{
+			G4double Edepo = *((*myPassMap)[i]);
+			std::cout << "Primitve" << " " << eventID << "  " << Edepo << std::endl;
+			
+		}
 	}
 
-	G4SDManager * SDmanager = G4SDManager::GetSDMpointer();
 	G4int plasticId = SDmanager->GetCollectionID("PSD/eDep");
-	//std::cout << plasticId << std::endl;
-
-	//G4THitsMap<G4double> *PlasticHitsCollection = static_cast<G4THitsMap<G4double> *>(hitsCollOfThisEvent->GetHC(plasticId));
 	PlasticHitsCollection *plasticHC = (PlasticHitsCollection *)(hitsCollOfThisEvent->GetHC(plasticId));
 
-	/*	
-	std::map<G4int, G4double *> *PlasticColMap = PlasticHitsCollection->GetMap();
-	std::map<G4int,G4double*>::iterator itr;
-	for (itr = PlasticColMap->begin(); itr != PlasticColMap ->end(); itr++)
-	{
-		std::cout << (itr-> first) << " " << (*itr->second)/keV << std::endl;
-	}
 
-	 // #dodatkowe : for (auto it : *PlasticHitsCollection -> GetMap()){
-		std::cout<<(it.first) << " " << *(it.second) << std::endl;
-	}
 
-	*/
+
+	
 	int eventId = anEvent -> GetEventID();
 	if(eventId%10000 == 0){
 		std::cout << "Currently run " << eventId << " particle from pool" << std::endl;
